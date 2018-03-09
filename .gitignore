@@ -1,0 +1,13 @@
+*.swp
+**/*.egg-info
+**/__pycache__
+**/*.pyc
+**/.cache/
+**/.mypy_cache/
+**.pytest_cache/
+.python-version
+venv
+.env
+.idea
+.vs
+package-lock.json
