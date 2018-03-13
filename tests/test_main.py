@@ -12,4 +12,4 @@ def test_client() -> testing.FlaskClient:
 def test_frontend_route(test_client: testing.FlaskClient) -> None:
     retval = test_client.get('/')
     assert retval.status_code == HTTPStatus.OK
-    assert b'Woot' in retval.data
+    assert b'Yahoo' in retval.data
