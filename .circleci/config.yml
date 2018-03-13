@@ -51,8 +51,15 @@ jobs:
           path: test-reports
           destination: test-reports
 
-  deployment:
-    staging:
-      branch: master
-      heroku:
-        appname: python-talk-658
+      # Deploy!
+
+      - run: bash .circleci/setup-heroku.sh
+      - add_ssh_keys:
+          fingerprints:
+            - "96:b5:99:a3:34:14:36:0c:21:75:37:16:0e:77:e5:f7"
+      - deploy:
+          name: Deploy Master to Heroku
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              git push heroku master
+            fi
