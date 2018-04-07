@@ -1,7 +1,7 @@
 
 # Purpose
 
-This repo containes the final code for a live coding talk 
+This repo contains the final code for a live coding talk 
 "CI and CD: So Easy You Can Do It Live!" 
 
 During the talk we will:
@@ -237,7 +237,7 @@ Add the public key to the SSH Keys section of
 
 ##### Add a deploy section to `config.yml`
 
-Append to config.yml
+Append to config.yml (use the fingerprint from your SSH key)
 
 ```
   deploy:
