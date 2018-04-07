@@ -51,15 +51,28 @@ jobs:
           path: test-reports
           destination: test-reports
 
-      # Deploy!
-
+  deploy:
+    name: Deploy Master to Heroku
+    requires:
+      - build
+    docker:
+      - image: circleci/python:3.6.1
+    steps:
+      - checkout
       - run: bash .circleci/setup-heroku.sh
       - add_ssh_keys:
           fingerprints:
             - "96:b5:99:a3:34:14:36:0c:21:75:37:16:0e:77:e5:f7"
+      - run: git push heroku master
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build
       - deploy:
-          name: Deploy Master to Heroku
-          command: |
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              git push heroku master
-            fi
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
