@@ -2,14 +2,14 @@
 # Purpose
 
 This repo contains the final code for a live coding talk 
-"CI and CD: So Easy You Can Do It Live!" 
+"CI / CD for the Masses" 
 
 During the talk we will:
 - create a simple Flask app
-- put it on github
-- deploy it on heroku.com
+- put it on GitHub
+- deploy it on Heroku
 - set up continuous integration testing on CircleCI
-- set up continuous deployment to heroku
+- set up continuous deployment to Heroku
  
 # Setup
 
@@ -47,34 +47,11 @@ virtualenv:
 
 setup:  virtualenv requirements.txt
 	env/bin/pip install -r requirements.txt
-	env/bin/pip install -e .
-```
-We'll need a setup.py so we can do the `pip install -e .`
-```
-cat > setup.py
-import setuptools
-
-
-setuptools.setup(
-    name='talk',
-    version='0.0.1',
-    long_description='CI / CD demo',
-    author='Steve Astels',
-    packages=setuptools.find_packages('src'),
-    package_dir={'': 'src'},
-    classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
-        'Intended Audience :: Developers',
-        'Natural Language :: English',
-        'Programming Language :: Python :: 3',
-    ],
-)
 ```
 
 Now we can write the app...
 ```
-mkdir src
-cat > src/main.py
+cat << EOF > main.py
 
 import flask
 import typing
@@ -95,11 +72,11 @@ def frontend() -> typing.Tuple[str, int]:
 
 if __name__ == "__main__":
     App.run()
+EOF
 ```
 ... and a test
 ```
-mkdir tests
-cat > tests/test_main.py
+cat << EOF > test_main.py
 
 import pytest
 from flask import testing
@@ -116,11 +93,12 @@ def test_frontend_route(test_client: testing.FlaskClient) -> None:
     retval = test_client.get('/')
     assert retval.status_code == HTTPStatus.OK
     assert b'Yahoo' in retval.data
+EOF
 ```
 
 Let's see if this works!
 ```
-python src/main.py
+python main.py
 ```
 ```
 pytest
@@ -140,7 +118,7 @@ Now let's put our project into this repo
 
 ```
 git init
-git add Makefile requirements.txt setup.py src/main.py tests/test_main.py
+git add Makefile requirements.txt *.py
 git commit -m "first commit"
 git remote add origin git@github.com:sastels/python_talk.git
 git push -u origin master
@@ -158,7 +136,7 @@ heroku login
 pip install gunicorn and add to requirements.txt
 pip freeze > requirements.txt
 cat > Procfile
-web: gunicorn --pythonpath src main:App
+web: gunicorn main:App
 ```
 
 Put the app on Heroku
@@ -179,7 +157,6 @@ heroku open
 * run build
 * fix `config.yml`:
     * use pytest rather than manage.py,
-    * do a pip install -e .
 
 
 ## Continuous Deployment
@@ -204,7 +181,9 @@ wget https://cli-assets.heroku.com/branches/stable/heroku-linux-amd64.tar.gz
 sudo mkdir -p /usr/local/lib /usr/local/bin
 sudo tar -xvzf heroku-linux-amd64.tar.gz -C /usr/local/lib
 sudo ln -s /usr/local/lib/heroku/bin/heroku /usr/local/bin/heroku
+```
 
+```
 cat > ~/.netrc << EOF
 machine api.heroku.com
   login $HEROKU_LOGIN
