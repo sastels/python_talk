@@ -12,7 +12,7 @@ App.config.update(dict(
 
 @App.route('/')
 def frontend() -> typing.Tuple[str, int]:
-    return 'Yahoo!', HTTPStatus.OK
+    return 'Yahoo to You!', HTTPStatus.OK
 
 
 if __name__ == "__main__":
