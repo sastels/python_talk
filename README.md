@@ -42,7 +42,7 @@ cd ci_cd_demo
 ## Create the app
 
 We'll install our python packages to a virtual environment
-``` 
+```
 python3 -m venv env
 source env/bin/activate
 pip install Flask pytest
