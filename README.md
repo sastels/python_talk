@@ -13,7 +13,7 @@ During the talk we will:
  
 # Setup
 
-This project requires Python 3.6 or higher.
+This project requires Python 3.6 or higher, as well as `pipenv`.
 
 Create (free) accounts on:
 - GitHub
@@ -41,22 +41,9 @@ cd ci_cd_demo
 
 ## Create the app
 
-We'll install our python packages to a virtual environment
+We'll install our python packages to a virtual environment using `pipenv`
 ```
-python3 -m venv env
-source env/bin/activate
-pip install Flask pytest
-pip freeze > requirements.txt
-```
-Let's add a `Makefile` to create this environment automatically:
-```
-.PHONY: virtualenv setup
-
-virtualenv:
-	[ ! -d env ] && python3 -m venv env || true
-
-setup:  virtualenv requirements.txt
-	env/bin/pip install -r requirements.txt
+pipenv install Flask pytest
 ```
 
 Now we can write the app. First `main.py`:
@@ -107,18 +94,23 @@ python main.py
 ```
 pytest
 ```
-Woot!
+Test fails - fix and it passes. Woot!
 
 ##  Add code to GitHub
 
 ```
-git add Makefile requirements.txt *.py
+git status
+```
+Have some cruft: `.pytest_cache/`, maybe `test_main.py~`. Append to .gitignore:
+```
+*~
+.pytest_cache
 ```
 
 Now let's put our project into this repo
 
 ```
-git add Makefile requirements.txt *.py
+git add .
 git commit -m "flask app"
 git push
 ```
@@ -131,18 +123,16 @@ The code should be the GitHub project you created
 
 We will use the `gunicorn` web server.
 ```
-pip install gunicorn
-pip freeze > requirements.txt
+pipenv install gunicorn
 ```
-We use a `Procfile` to tell Heroku how to run the app. 
+We use `Procfile` to tell Heroku how to run the app: 
 ```
-cat > Procfile
 web: gunicorn main:App
 ```
 
 Update the repo
 ```
-git add requirements.txt Procfile
+git add .
 git commit -m "Heroku setup"
 git push
 ```
@@ -173,7 +163,7 @@ heroku open
 We're going to need our Heroku Login and Heroku API Key.
  
 * HEROKU_LOGIN: sastels.demo@gmail.com
-* API HEROKU_API_KEY: get at https://dashboard.heroku.com/account
+* HEROKU_API_KEY: get at https://dashboard.heroku.com/account
 
 Set these at
 [https://circleci.com/gh/sastels/ci_cd_demo/edit#env-vars](https://circleci.com/gh/sastels/ci_cd_demo/edit#env-vars)
@@ -197,29 +187,9 @@ machine git.heroku.com
 EOF
 ```
 
-##### Make an SSH key for CircleCI
-
-- Make new SSH key
-```
-ssh-keygen -t rsa -f circleci_key
-pbcopy < circleci_key
-```
-
-- add to circleci ssh permissions
-[https://circleci.com/gh/sastels/ci_cd_demo/edit#ssh](https://circleci.com/gh/sastels/ci_cd_demo/edit#ssh)
-
-- hostname `git.heroku.com`
-- private key: <paste>
-- Make a note of the fingerprint 
-(you'll need it in the `config.yml` addition below)
-
-Add the public key to the SSH Keys section of
-
-[https://dashboard.heroku.com/account](https://dashboard.heroku.com/account)
-
 ##### Add a deploy section to `config.yml`
 
-Append to config.yml (use the fingerprint from your SSH key)
+Append to config.yml
 
 ```
   deploy:
@@ -231,9 +201,6 @@ Append to config.yml (use the fingerprint from your SSH key)
     steps:
       - checkout
       - run: bash .circleci/setup-heroku.sh
-      - add_ssh_keys:
-          fingerprints:
-            - "XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX"
       - run: git push heroku master
 
 workflows:
