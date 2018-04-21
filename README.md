@@ -47,10 +47,9 @@ pipenv install Flask pytest
 ```
 
 Now we can write the app. First `main.py`:
-```
+```python
 import flask
 from http import HTTPStatus
-
 
 App = flask.Flask(__name__)
 
@@ -61,7 +60,7 @@ App.config.update(dict(
 
 @App.route('/')
 def frontend():
-    return 'Woot!', HTTPStatus.OK
+    return '<img src="https://i.imgflip.com/1c7wix.jpg">'
 
 
 if __name__ == "__main__":
@@ -69,7 +68,7 @@ if __name__ == "__main__":
 ```
 
 Next `test_main.py`
-```
+```python
 import pytest
 from flask import testing
 import main
@@ -115,8 +114,7 @@ git commit -m "flask app"
 git push
 ```
 
-The code should be the GitHub project you created
-[https://github.com/sastels/ci_cd_demo](https://github.com/sastels/ci_cd_demo)
+The code should be the GitHub project you created.
 
 
 ## Run on Heroku
@@ -125,7 +123,7 @@ We will use the `gunicorn` web server.
 ```
 pipenv install gunicorn
 ```
-We use `Procfile` to tell Heroku how to run the app: 
+Create a `Procfile` to tell Heroku how to run the app: 
 ```
 web: gunicorn main:App
 ```
@@ -136,16 +134,24 @@ git add .
 git commit -m "Heroku setup"
 git push
 ```
-Put the app on Heroku
+Create an empty Heroku app
 ```
 heroku create
+```
+Let's give it a better name
+```
+heroku apps:rename cicd-py
+```
+Now push the code to the app
+```
 git push heroku master
 ```
 
-That's it! You can navigate to the web site, or open it with
+That's it! We can navigate to the web site, or open it with
 ```
 heroku open
 ```
+
 
 ## Continuous Integration
 
@@ -169,9 +175,9 @@ Set these at
 [https://circleci.com/gh/sastels/ci_cd_demo/edit#env-vars](https://circleci.com/gh/sastels/ci_cd_demo/edit#env-vars)
 
 Add this script `.circleci/setup-heroku.sh` that CircleCI will use to connect to Heroku.
-```
+```bash
 #!/bin/bash
-git remote add heroku https://git.heroku.com/XXXXXXXXXX.git
+git remote add heroku https://git.heroku.com/cicd-py.git
 wget https://cli-assets.heroku.com/branches/stable/heroku-linux-amd64.tar.gz
 sudo mkdir -p /usr/local/lib /usr/local/bin
 sudo tar -xvzf heroku-linux-amd64.tar.gz -C /usr/local/lib
