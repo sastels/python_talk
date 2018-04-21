@@ -47,10 +47,9 @@ pipenv install Flask pytest
 ```
 
 Now we can write the app. First `main.py`:
-```
+```python
 import flask
 from http import HTTPStatus
-
 
 App = flask.Flask(__name__)
 
@@ -61,7 +60,7 @@ App.config.update(dict(
 
 @App.route('/')
 def frontend():
-    return 'Woot!', HTTPStatus.OK
+    return '<img src="https://i.imgflip.com/1c7wix.jpg">'
 
 
 if __name__ == "__main__":
@@ -69,7 +68,7 @@ if __name__ == "__main__":
 ```
 
 Next `test_main.py`
-```
+```python
 import pytest
 from flask import testing
 import main
@@ -169,7 +168,7 @@ Set these at
 [https://circleci.com/gh/sastels/ci_cd_demo/edit#env-vars](https://circleci.com/gh/sastels/ci_cd_demo/edit#env-vars)
 
 Add this script `.circleci/setup-heroku.sh` that CircleCI will use to connect to Heroku.
-```
+```bash
 #!/bin/bash
 git remote add heroku https://git.heroku.com/XXXXXXXXXX.git
 wget https://cli-assets.heroku.com/branches/stable/heroku-linux-amd64.tar.gz
