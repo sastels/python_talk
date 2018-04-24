@@ -83,7 +83,7 @@ def test_client():
 def test_frontend_route(test_client):
     retval = test_client.get('/')
     assert retval.status_code == HTTPStatus.OK
-    assert b'Yahoo' in retval.data
+    assert b'<img' in retval.data
 ```
 
 Let's see if this works!
@@ -93,7 +93,6 @@ python main.py
 ```
 pytest
 ```
-Test fails - fix and it passes. Woot!
 
 ##  Add code to GitHub
 
